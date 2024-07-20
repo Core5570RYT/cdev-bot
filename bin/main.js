@@ -330,7 +330,7 @@ MessageHandler.init = function() {
 		if(split.length > 1) {
 			boopThis = split[1];
 		}
-		m.reply(MessageHandler.createEmbed("Boop! " + boopThis,""));
+		m.reply("Boop! " + boopThis);
 	}});
 	MessageHandler.actions.push({ name : "version", desc : "Shows current version of this bot and CDEV Engine.", handle : function(m) {
 		var cdevVer = "";
@@ -387,7 +387,10 @@ MessageHandler.init = function() {
 		m.reply(MessageHandler.createEmbed("" + Main.get_name() + " Command List",content));
 	}});
 };
-MessageHandler.createEmbed = function(title,content) {
+MessageHandler.createEmbed = function(title,content,allowTag) {
+	if(allowTag == null) {
+		allowTag = false;
+	}
 	var embed = new discord_$js_MessageEmbed();
 	embed.type = "article";
 	embed.color = 3447003;
@@ -397,11 +400,15 @@ MessageHandler.createEmbed = function(title,content) {
 	if(content != "") {
 		embed.setDescription(content);
 	}
-	return { allowedMentions : { parse : []}, embeds : [embed]};
+	var data = { embeds : [embed]};
+	if(!allowTag) {
+		data = { allowedMentions : { parse : []}, embeds : [embed]};
+	}
+	return data;
 };
 MessageHandler.check = function(message) {
 	if(!MessageHandler.ready) {
-		haxe_Log.trace("Recieved a message, but actions haven't initialized yet!",{ fileName : "src/MessageHandler.hx", lineNumber : 114, className : "MessageHandler", methodName : "check"});
+		haxe_Log.trace("Recieved a message, but actions haven't initialized yet!",{ fileName : "src/MessageHandler.hx", lineNumber : 116, className : "MessageHandler", methodName : "check"});
 		return;
 	}
 	var noPrefix = message.content.substring(MessageHandler.prefix.length);

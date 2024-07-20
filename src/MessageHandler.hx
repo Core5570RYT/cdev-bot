@@ -43,7 +43,7 @@ class MessageHandler {
             if (split.length > 1) {
                 boopThis = split[1];
             }
-            m.reply(createEmbed("Boop! "+boopThis,""));
+            m.reply("Boop! "+boopThis);
         }});
 
         // VERSION 
@@ -100,13 +100,15 @@ class MessageHandler {
         }});
     }
 
-    public static function createEmbed(title:String, content:Dynamic) {
+    public static function createEmbed(title:String, content:Dynamic, ?allowTag:Bool = false) {
         var embed = new MessageEmbed();
         embed.type = 'article';
         embed.color = 3447003;
         if (title != "")  embed.setTitle(title);
         if (content != "") embed.setDescription(content);
-        return {allowedMentions: {parse: []}, embeds:[embed]};
+        var data:Dynamic = {embeds:[embed]};
+        if (!allowTag) data = {allowedMentions: {parse: []}, embeds:[embed]};
+        return data;
     }
 
     public static function check(message:Message) {
