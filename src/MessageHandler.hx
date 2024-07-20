@@ -32,7 +32,7 @@ class MessageHandler {
         }});
 
         actions.push({name:"uptime", desc: "Check how long does this bot have been active.", handle:(m:Message)->{
-            m.reply(createEmbed('${Main.name} has been active for ${Main.botUptime/1000}s',""));
+            m.reply(createEmbed('${Main.name} has been active for ${Util.getCurrentDuration(Main.botUptime)}',"Bot started on " + Main.startDate.toString()));
         }});
 
         // BOOP

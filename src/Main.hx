@@ -20,6 +20,8 @@ class Main {
 	public static var version:String = "0.1.0";
 	public static var botUptime:Float = 0;
 
+	public static var startDate:Date;
+
     public static var name(get, never):String;
 	private static function get_name() {
 		if (config == null || config.project_name == null) {
@@ -40,6 +42,7 @@ class Main {
 	 * initialization
 	 */
 	static function init() {
+		startDate = Date.now();
         Sys.command("cls");
 		try {
 			config = Json.parse(File.getContent('./config.json'));

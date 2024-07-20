@@ -239,6 +239,7 @@ Main.__name__ = "Main";
 Main.__properties__ = {get_name:"get_name"};
 Main.config = null;
 Main.client = null;
+Main.startDate = null;
 Main.get_name = function() {
 	if(Main.config == null || Main.config.project_name == null) {
 		return "bot";
@@ -250,20 +251,21 @@ Main.main = function() {
 	Main.start();
 };
 Main.init = function() {
+	Main.startDate = new Date();
 	js_node_ChildProcess.spawnSync("cls",{ shell : true, stdio : "inherit"});
 	try {
 		Main.config = JSON.parse(js_node_Fs.readFileSync("./config.json",{ encoding : "utf8"}));
 	} catch( _g ) {
 		var _g1 = haxe_Exception.caught(_g);
-		haxe_Log.trace(_g1.get_message(),{ fileName : "src/Main.hx", lineNumber : 47, className : "Main", methodName : "init"});
+		haxe_Log.trace(_g1.get_message(),{ fileName : "src/Main.hx", lineNumber : 50, className : "Main", methodName : "init"});
 	}
 	if(Main.config == null || Main.config.discord_token == "TOKEN_HERE") {
 		throw haxe_Exception.thrown("Enter your discord auth token.");
 	}
 	new discordjs_rest_REST({ version : "9"}).setToken(Main.config.discord_token).put(Routes.applicationGuildCommands(Main.config.client_id,Main.config.server_id),{ body : []}).then(function(_) {
-		haxe_Log.trace("Successfully registered application commands.",{ fileName : "src/Main.hx", lineNumber : 57, className : "Main", methodName : "init"});
+		haxe_Log.trace("Successfully registered application commands.",{ fileName : "src/Main.hx", lineNumber : 60, className : "Main", methodName : "init"});
 	},function(err) {
-		haxe_Log.trace(err,{ fileName : "src/Main.hx", lineNumber : 57, className : "Main", methodName : "init"});
+		haxe_Log.trace(err,{ fileName : "src/Main.hx", lineNumber : 60, className : "Main", methodName : "init"});
 	});
 };
 Main.start = function() {
@@ -273,7 +275,7 @@ Main.start = function() {
 		var $l=arguments.length;
 		var _ = new Array($l>0?$l-0:0);
 		for(var $i=0;$i<$l;++$i){_[$i-0]=arguments[$i];}
-		haxe_Log.trace("Bot is ready! " + Main.client.user.username,{ fileName : "src/Main.hx", lineNumber : 69, className : "Main", methodName : "start"});
+		haxe_Log.trace("Bot is ready! " + Main.client.user.username,{ fileName : "src/Main.hx", lineNumber : 72, className : "Main", methodName : "start"});
 		Main.connected = true;
 	});
 	Main.client.on("messageCreate",function(message) {
@@ -319,7 +321,7 @@ MessageHandler.init = function() {
 		throw haxe_Exception.thrown("crash happened i guess");
 	}});
 	MessageHandler.actions.push({ name : "uptime", desc : "Check how long does this bot have been active.", handle : function(m) {
-		m.reply(MessageHandler.createEmbed("" + Main.get_name() + " has been active for " + Main.botUptime / 1000 + "s",""));
+		m.reply(MessageHandler.createEmbed("" + Main.get_name() + " has been active for " + Util.getCurrentDuration(Main.botUptime),"Bot started on " + HxOverrides.dateStr(Main.startDate)));
 	}});
 	MessageHandler.actions.push({ name : "boop", param : ["username"], desc : "Boop someone!", handle : function(m) {
 		var split = m.content.split(" ");
@@ -1678,6 +1680,32 @@ Type.enumIndex = function(e) {
 };
 Type.allEnums = function(e) {
 	return e.__empty_constructs__.slice();
+};
+var Util = function() { };
+$hxClasses["Util"] = Util;
+Util.__name__ = "Util";
+Util.getCurrentDuration = function(duration) {
+	var theshit = Math.floor(duration / 1000);
+	var secs = "" + theshit % 60;
+	var mins = "" + Math.floor(theshit / 60) % 60;
+	var hour = "" + Math.floor(theshit / 3600) % 24;
+	if(theshit < 0) {
+		theshit = 0;
+	}
+	if(duration < 0) {
+		duration = 0;
+	}
+	if(secs.length < 2) {
+		secs = "0" + secs;
+	}
+	var shit = mins + ":" + secs;
+	if(hour != "0") {
+		if(mins.length < 2) {
+			mins = "0" + mins;
+		}
+		shit = hour + ":" + mins + ":" + secs;
+	}
+	return shit;
 };
 var discord_$js_APIMessage = require("discord.js").APIMessage;
 var discord_$js_Activity = require("discord.js").Activity;
